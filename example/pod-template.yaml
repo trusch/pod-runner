@@ -1,0 +1,49 @@
+apps:
+- name: susi-core
+  image:
+    name: quay.io/trusch/susi-core
+    labels:
+    - name: version
+      value: v0.2.1
+  app:
+    exec:
+    - /usr/local/bin/susi-core
+    - -k
+    - /etc/susi/keys/susi-core.key
+    - -c
+    - /etc/susi/keys/susi-core.crt
+    mountpoints:
+    - name: config
+      path: /etc/susi
+
+- name: susi-boltplus
+  image:
+    name: quay.io/trusch/susi-boltplus
+    labels:
+    - name: version
+      value: v0.2.1
+  app:
+    exec:
+    - susi-boltplus
+    - -cert
+    - /etc/susi/keys/susi-boltplus.crt
+    - -key
+    - /etc/susi/keys/susi-boltplus.key
+    - -db
+    - /usr/share/susi/db/boltplus.db
+    mountpoints:
+    - name: config
+      path: /etc/susi
+    - name: db
+      path: /usr/share/susi/db
+
+volumes:
+- name: config
+  kind: host
+  source: config
+  readonly: true
+  recursive: true
+- name: db
+  kind: host
+  source: db
+  recursive: true
